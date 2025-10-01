@@ -2,11 +2,14 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { DesignOutput, DesignTypeId } from '../types';
 import { DESIGN_TYPES } from '../constants/design-types';
 
-if (!process.env.VITE_GEMINI_API_KEY) {
-  throw new Error("VITE_GEMINI_API_KEY environment variable not set");
+// This provides a fallback for local development (API_KEY) vs. deployment (VITE_GEMINI_API_KEY)
+const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.API_KEY;
+if (!apiKey) {
+    // This will be caught by the UI and shown to the user.
+    throw new Error("API key not found. Please set VITE_GEMINI_API_KEY in your deployment environment or API_KEY for local development.");
 }
+const ai = new GoogleGenAI({ apiKey });
 
-const ai = new GoogleGenAI({ apiKey: process.env.VITE_GEMINI_API_KEY });
 
 // --- IMAGE GENERATION ---
 
