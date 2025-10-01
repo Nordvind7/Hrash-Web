@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { DesignOutput, DesignTypeId } from '../types';
 import { DESIGN_TYPES } from '../constants/design-types';
@@ -17,9 +18,12 @@ const getAiClient = (): GoogleGenAI => {
         return aiClient;
     }
 
-    const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.API_KEY;
+    // This is the robust check for both Netlify (VITE_API_KEY) and other environments (API_KEY)
+    const apiKey = process.env.VITE_API_KEY || process.env.API_KEY;
+    
     if (!apiKey) {
-        throw new Error("API key not found. Please set VITE_GEMINI_API_KEY in your deployment environment or API_KEY for local development.");
+        // This is the new, much clearer error message
+        throw new Error("Не удалось создать проект: ключ API не найден. Установите VITE_API_KEY в вашей среде развертывания (например, Netlify) или API_KEY для локальной разработки.");
     }
     
     aiClient = new GoogleGenAI({ apiKey });
