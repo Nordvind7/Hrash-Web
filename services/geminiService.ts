@@ -2,13 +2,29 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { DesignOutput, DesignTypeId } from '../types';
 import { DESIGN_TYPES } from '../constants/design-types';
 
-// This provides a fallback for local development (API_KEY) vs. deployment (VITE_GEMINI_API_KEY)
-const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.API_KEY;
-if (!apiKey) {
-    // This will be caught by the UI and shown to the user.
-    throw new Error("API key not found. Please set VITE_GEMINI_API_KEY in your deployment environment or API_KEY for local development.");
-}
-const ai = new GoogleGenAI({ apiKey });
+let aiClient: GoogleGenAI | null = null;
+
+/**
+ * Initializes and returns the GoogleGenAI client instance.
+ * This function uses lazy initialization to ensure the API key is only
+ * checked and the client is only created when it's actually needed.
+ * This prevents the entire application from crashing on load if the API key is missing.
+ * @returns {GoogleGenAI} The initialized GoogleGenAI client.
+ * @throws {Error} If the API key is not found in the environment variables.
+ */
+const getAiClient = (): GoogleGenAI => {
+    if (aiClient) {
+        return aiClient;
+    }
+
+    const apiKey = process.env.VITE_GEMINI_API_KEY || process.env.API_KEY;
+    if (!apiKey) {
+        throw new Error("API key not found. Please set VITE_GEMINI_API_KEY in your deployment environment or API_KEY for local development.");
+    }
+    
+    aiClient = new GoogleGenAI({ apiKey });
+    return aiClient;
+};
 
 
 // --- IMAGE GENERATION ---
@@ -32,6 +48,7 @@ const getAspectRatioForAsset = (designTypeId: DesignTypeId, key: string): '16:9'
 
 const generateImage = async (prompt: string, aspectRatio: '16:9' | '1:1' | '9:16'): Promise<string> => {
     try {
+        const ai = getAiClient();
         const response = await ai.models.generateImages({
             model: 'imagen-4.0-generate-001',
             prompt: prompt,
@@ -92,6 +109,8 @@ export const generateDesign = async (
     image: {b64: string, mimeType: string} | null
 ): Promise<DesignOutput> => {
     try {
+        const ai = getAiClient(); // Initialize the client here, only when needed.
+
         const designType = DESIGN_TYPES.find(d => d.id === designTypeId);
         if (!designType) {
             throw new Error(`Invalid design type specified: ${designTypeId}`);
