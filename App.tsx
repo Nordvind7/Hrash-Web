@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useRef } from 'react';
 import { DesignOutput, WebsiteData, DesignTypeId, GraphicAssetData } from './types';
 import { generateDesign } from './services/geminiService';
@@ -265,10 +266,10 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="max-w-3xl mx-auto animate-fade-in">
-             <button onClick={() => setSelectedDesignType(null)} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-4 p-2 rounded-lg hover:bg-slate-800">
+        <div className="w-full max-w-3xl mx-auto animate-fade-in">
+             <button onClick={() => setSelectedDesignType(null)} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6 p-2 rounded-lg hover:bg-slate-800/60">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                Назад к выбору
+                <span>Все категории</span>
             </button>
             <h2 className="text-3xl font-bold text-white font-heading mb-2">Создать: {currentDesignType?.title}</h2>
             <p className="text-slate-400 mb-6">{currentDesignType?.description}</p>

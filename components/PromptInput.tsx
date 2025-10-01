@@ -46,24 +46,24 @@ const PromptInput: React.FC<PromptInputProps> = ({
         </div>
 
         {/* Style Reference Uploader */}
-        <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-4 p-4 bg-slate-900/50 border border-dashed border-slate-700 rounded-lg">
-             <div className="flex-grow text-center sm:text-left">
+        <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-slate-900/60 border border-slate-700 rounded-lg">
+             <div className="text-center sm:text-left">
                 <h4 className="font-semibold text-white">Задать стиль</h4>
                 <p className="text-sm text-slate-400">Добавьте изображение как референс (по желанию).</p>
              </div>
              <div className="flex-shrink-0">
                  {!imagePreviewUrl ? (
-                    <label className="w-40 h-12 flex justify-center items-center gap-2 bg-slate-700 text-slate-300 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-indigo-500 transition-all duration-200 cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <label className="relative flex items-center justify-center h-12 px-6 bg-slate-700 text-slate-300 font-semibold rounded-lg shadow-sm hover:bg-slate-600 transition-all duration-200 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
                         </svg>
                         <span>Выбрать...</span>
-                        <input type="file" accept="image/*" onChange={onImageChange} className="hidden" />
+                        <input type="file" accept="image/*" onChange={onImageChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                     </label>
                  ) : (
-                    <div className="relative w-40 h-auto">
-                        <img src={imagePreviewUrl} alt="Preview" className="w-full h-auto object-cover rounded-md" />
-                        <button onClick={onImageRemove} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-lg hover:bg-red-500 transition-colors">
+                    <div className="relative w-28 h-auto">
+                        <img src={imagePreviewUrl} alt="Preview" className="w-full h-auto object-cover rounded-md shadow-md" />
+                        <button onClick={onImageRemove} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-lg hover:bg-red-500 transition-colors focus:outline-none focus:ring-2 focus:ring-white">
                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>

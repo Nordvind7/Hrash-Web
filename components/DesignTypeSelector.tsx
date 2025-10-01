@@ -1,5 +1,6 @@
 
 
+
 import React from 'react';
 import { DESIGN_TYPES } from '../constants/design-types';
 import { DesignTypeId } from '../types';
@@ -17,7 +18,7 @@ const DesignTypeSelector: React.FC<DesignTypeSelectorProps> = ({ onSelect }) => 
           <button
             key={type.id}
             onClick={() => onSelect(type.id)}
-            className="group p-4 sm:p-6 bg-slate-800/60 backdrop-blur-lg rounded-xl border border-slate-700 hover:border-indigo-500 hover:bg-slate-800/80 transition-all duration-300 ease-in-out text-left focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="group relative p-6 bg-slate-800/60 backdrop-blur-lg rounded-2xl border border-slate-700 hover:border-indigo-500 hover:bg-slate-800/80 transition-all duration-300 ease-in-out text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md hover:shadow-indigo-500/20 hover:-translate-y-1"
           >
             <div 
               className="text-indigo-400 group-hover:text-white transition-colors duration-300 mb-4"
