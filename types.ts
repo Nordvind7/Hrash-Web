@@ -1,3 +1,10 @@
+// --- Generic Design Types ---
+import { DESIGN_TYPES } from './constants/design-types';
+
+export type DesignTypeId = typeof DESIGN_TYPES[number]['id'];
+
+// --- Website-Specific Types ---
+
 export interface NavLink {
   text: string;
   href: string;
@@ -74,6 +81,7 @@ export interface Theme {
 }
 
 export interface WebsiteData {
+  designType: 'website'; // To distinguish from other design types
   theme: Theme;
   header: HeaderData;
   hero: HeroSection;
@@ -82,3 +90,101 @@ export interface WebsiteData {
   cta: CallToActionSection;
   footer: FooterData;
 }
+
+
+// --- Graphic Asset-Specific Types ---
+
+export interface AppDesignData {
+    designType: 'app-design';
+    title: string;
+    imagePrompt: string;
+    imageUrl?: string;
+}
+
+export interface MarketingKitData {
+    designType: 'marketing-kit';
+    title: string;
+    imagePrompt: string;
+    imageUrl?: string;
+}
+
+export interface LogoData {
+    designType: 'logo';
+    title: string;
+    imagePrompt: string;
+    imageUrl?: string;
+}
+
+export interface BusinessCardData {
+    designType: 'business-card';
+    name: string;
+    jobTitle: string;
+    phone: string;
+    email: string;
+    website: string;
+    backgroundImagePrompt: string;
+    backgroundImageUrl?: string;
+}
+
+export interface YoutubeCoverData {
+    designType: 'youtube-cover';
+    headline: string;
+    channelName: string;
+    backgroundImagePrompt: string;
+    backgroundImageUrl?: string;
+}
+
+export interface ArticleCoverData {
+    designType: 'article-cover';
+    title: string;
+    imagePrompt: string;
+    imageUrl?: string;
+}
+
+export interface AdCreativeData {
+    designType: 'ad-creative';
+    headline: string;
+    callToAction: string;
+    backgroundImagePrompt: string;
+    backgroundImageUrl?: string;
+}
+
+export interface PosterData {
+    designType: 'poster';
+    title: string;
+    subtitle: string;
+    eventInfo: string;
+    backgroundImagePrompt: string;
+    backgroundImageUrl?: string;
+}
+
+export interface ChecklistData {
+    designType: 'checklist';
+    title: string;
+    imagePrompt: string;
+    imageUrl?: string;
+}
+
+export interface LeadMagnetData {
+    designType: 'lead-magnet';
+    title: string;
+    author: string;
+    backgroundImagePrompt: string;
+    backgroundImageUrl?: string;
+}
+
+export type GraphicAssetData = 
+  | AppDesignData
+  | MarketingKitData
+  | LogoData
+  | BusinessCardData
+  | YoutubeCoverData
+  | ArticleCoverData
+  | AdCreativeData
+  | PosterData
+  | ChecklistData
+  | LeadMagnetData;
+
+
+// Union type for all possible outputs
+export type DesignOutput = WebsiteData | GraphicAssetData;

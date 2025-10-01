@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface PromptInputProps {
@@ -8,6 +9,7 @@ interface PromptInputProps {
   onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onImageRemove: () => void;
   imagePreviewUrl: string | null;
+  placeholder: string;
 }
 
 const PromptInput: React.FC<PromptInputProps> = ({ 
@@ -17,7 +19,8 @@ const PromptInput: React.FC<PromptInputProps> = ({
     isLoading,
     onImageChange,
     onImageRemove,
-    imagePreviewUrl
+    imagePreviewUrl,
+    placeholder
 }) => {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
@@ -29,30 +32,36 @@ const PromptInput: React.FC<PromptInputProps> = ({
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-slate-800/50 rounded-xl border border-slate-700 shadow-lg">
-        <div className="flex flex-col sm:flex-row items-start gap-4">
-            <div className="relative w-full">
-                <textarea
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="например, 'Создай сайт для кофейни в стиле лофт'"
-                    className="w-full h-36 p-4 bg-slate-900 border border-slate-600 rounded-lg text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow duration-200 resize-none"
-                    disabled={isLoading}
-                />
-            </div>
+    <div className="p-4 sm:p-6 bg-slate-800/50 rounded-xl border border-slate-700 shadow-lg flex flex-col gap-4">
+        {/* Main Prompt Textarea */}
+        <div className="relative w-full">
+            <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={placeholder}
+                className="w-full h-36 p-4 bg-slate-900 border border-slate-600 rounded-lg text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow duration-200 resize-none"
+                disabled={isLoading}
+            />
+        </div>
 
-             <div className="w-full sm:w-auto flex flex-col items-center gap-2">
+        {/* Style Reference Uploader */}
+        <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-4 p-4 bg-slate-900/50 border border-dashed border-slate-700 rounded-lg">
+             <div className="flex-grow text-center sm:text-left">
+                <h4 className="font-semibold text-white">Задать стиль</h4>
+                <p className="text-sm text-slate-400">Добавьте изображение как референс (по желанию).</p>
+             </div>
+             <div className="flex-shrink-0">
                  {!imagePreviewUrl ? (
-                    <label className="w-full sm:w-48 h-12 flex justify-center items-center gap-2 bg-slate-700 text-slate-300 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-indigo-500 transition-all duration-200 cursor-pointer">
+                    <label className="w-40 h-12 flex justify-center items-center gap-2 bg-slate-700 text-slate-300 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-indigo-500 transition-all duration-200 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
                         </svg>
-                        <span>Задать стиль</span>
+                        <span>Выбрать...</span>
                         <input type="file" accept="image/*" onChange={onImageChange} className="hidden" />
                     </label>
                  ) : (
-                    <div className="relative w-full sm:w-48 h-auto p-2 border-2 border-dashed border-slate-600 rounded-lg">
+                    <div className="relative w-40 h-auto">
                         <img src={imagePreviewUrl} alt="Preview" className="w-full h-auto object-cover rounded-md" />
                         <button onClick={onImageRemove} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-lg hover:bg-red-500 transition-colors">
                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -61,11 +70,11 @@ const PromptInput: React.FC<PromptInputProps> = ({
                         </button>
                     </div>
                  )}
-                 <p className="text-xs text-slate-500 text-center w-full sm:w-48">по желанию</p>
              </div>
         </div>
 
-        <div className="mt-4 flex flex-col items-center">
+        {/* Submit Button */}
+        <div className="mt-2 flex flex-col items-center">
             <button
                 onClick={onSubmit}
                 disabled={isLoading || !prompt.trim()}
