@@ -9,6 +9,54 @@ const GraphicAssetViewer = React.forwardRef<HTMLDivElement, GraphicAssetViewerPr
     
     const renderContent = () => {
         switch (data.designType) {
+            case 'logo':
+                 return (
+                    <div className="flex flex-col items-center p-4">
+                        <h2 className="text-2xl font-bold text-white font-heading mb-6 text-center">{data.brandName}</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="flex flex-col items-center">
+                                <div className="w-64 h-64 bg-white rounded-lg overflow-hidden border border-slate-600 flex items-center justify-center p-4 shadow-lg">
+                                    {data.colorLogoUrl && <img src={data.colorLogoUrl} alt="Color Logo" className="max-w-full max-h-full object-contain" />}
+                                </div>
+                                <p className="mt-3 text-slate-300 font-semibold">Цветная версия</p>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <div className="w-64 h-64 bg-white rounded-lg overflow-hidden border border-slate-600 flex items-center justify-center p-4 shadow-lg">
+                                    {data.bwLogoUrl && <img src={data.bwLogoUrl} alt="B&W Logo" className="max-w-full max-h-full object-contain" />}
+                                </div>
+                                <p className="mt-3 text-slate-300 font-semibold">Ч/Б версия</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            case 'marketing-kit':
+                return (
+                     <div className="w-[640px] aspect-[16/9] bg-cover bg-center rounded-lg shadow-lg flex flex-col justify-center p-10 text-white border border-slate-600" style={{ backgroundImage: `url(${data.backgroundImageUrl})` }}>
+                        <div className="bg-black/50 p-6 rounded-lg backdrop-blur-sm">
+                            <h1 className="text-3xl font-bold font-heading">{data.slideTitle}</h1>
+                            <p className="text-lg mt-2 opacity-90">{data.mainThesis}</p>
+                            <ul className="mt-4 space-y-2 list-disc list-inside">
+                                {data.keyPoints.map((point, i) => <li key={i}>{point}</li>)}
+                            </ul>
+                        </div>
+                    </div>
+                );
+            case 'checklist':
+                 return (
+                    <div className="w-[320px] aspect-[9/16] bg-cover bg-center rounded-lg shadow-lg flex flex-col p-6 text-slate-800 border border-slate-600" style={{ backgroundImage: `url(${data.backgroundImageUrl})` }}>
+                        <div className="bg-white/80 p-6 rounded-lg backdrop-blur-md h-full">
+                            <h1 className="text-2xl font-bold font-heading text-slate-900">{data.title}</h1>
+                             <ul className="mt-4 space-y-3">
+                                {data.items.map((item, i) => (
+                                    <li key={i} className="flex items-center">
+                                        <div className="w-5 h-5 border-2 border-slate-400 rounded-sm mr-3"></div>
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                 )
             case 'business-card':
                 return (
                     <div className="w-[525px] h-[300px] bg-cover bg-center rounded-lg shadow-lg flex flex-col justify-between p-6 text-white" style={{ backgroundImage: `url(${data.backgroundImageUrl})` }}>
@@ -59,12 +107,9 @@ const GraphicAssetViewer = React.forwardRef<HTMLDivElement, GraphicAssetViewerPr
 
             // Fallback for simple image assets
             case 'app-design':
-            case 'marketing-kit':
-            case 'logo':
             case 'article-cover':
-            case 'checklist':
-                const aspectRatio = data.designType === 'app-design' || data.designType === 'checklist' ? 'aspect-[9/16]' : 'aspect-square';
-                const maxWidth = data.designType === 'app-design' || data.designType === 'checklist' ? 'max-w-[300px]' : 'max-w-xl';
+                const aspectRatio = data.designType === 'app-design' ? 'aspect-[9/16]' : 'aspect-square';
+                const maxWidth = data.designType === 'app-design' ? 'max-w-[300px]' : 'max-w-xl';
                 return (
                      <div className={`w-full ${maxWidth} mx-auto flex flex-col items-center`}>
                         <h2 className="text-2xl font-bold text-white font-heading mb-6 text-center">{data.title}</h2>

@@ -13,7 +13,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
       <main className="flex-grow container mx-auto px-4 py-8 sm:py-12 flex flex-col justify-center items-center text-center">
         <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white font-heading tracking-tight">
-            Hrash Designer
+            AI Designer Hrash
           </h1>
         </div>
         <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>

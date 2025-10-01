@@ -10,7 +10,7 @@ const Header: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold font-heading tracking-tight">Дизайнер Храш</h1>
+            <h1 className="text-xl sm:text-2xl font-bold font-heading tracking-tight">AI Designer Hrash</h1>
         </div>
         <a 
             href="https://github.com/google/genai-js" 

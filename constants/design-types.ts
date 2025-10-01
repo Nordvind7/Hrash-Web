@@ -1,4 +1,3 @@
-
 import { Type } from "@google/genai";
 
 // =================================================================
@@ -23,13 +22,13 @@ DESIGN DIRECTIVES:
 3.  **Prompt Detail:** The image prompt should be a detailed specification for another AI to generate a visually perfect representation of the screen. Include terms like 'UI/UX design', 'Figma', 'mobile app screen', 'dark mode/light mode', 'minimalist', 'clean interface'.
 4.  **Reference Analysis:** If a reference image is provided, analyze its UI patterns, color usage, and component styling. Incorporate that *feeling* and *style* into a new, original screen design.`;
 
-const BRAND_STRATEGIST_INSTRUCTION = `You are a world-class Brand Strategist and Graphic Designer specializing in logo creation. Your goal is to design a unique, memorable, and versatile logo. Generate a JSON object containing a 'title' and a detailed 'imagePrompt'. The prompt must describe the logo's concept, style (e.g., minimalist, abstract, emblem), color palette, and potential applications. All text must be in Russian.
+const BRAND_STRATEGIST_INSTRUCTION = `You are a world-class Brand Strategist and Graphic Designer specializing in logo creation. Your goal is to design a unique, memorable, and versatile logo. Generate a JSON object containing the 'brandName', a 'colorLogoPrompt' for the full-color version, and a 'bwLogoPrompt' for a strict black-and-white version. All text must be in Russian.
 
 DESIGN DIRECTIVES:
-1.  **Concept is King:** The logo must tell a story or represent the brand's core idea.
-2.  **Simplicity & Memorability:** The best logos are simple and instantly recognizable. Avoid clutter.
-3.  **Vector-Ready Prompt:** The prompt should guide an AI to create a clean, scalable vector-style graphic. Use keywords like 'minimalist vector logo', 'flat icon', 'golden ratio', 'geometric', 'branding', 'masterpiece'.
-4.  **Reference Analysis:** If a reference image is given, extract its core shapes, style, and mood. Use this as inspiration for a completely new and distinct logo concept.`;
+1.  **Concept is King:** The logo must embody the brand's core idea.
+2.  **Versatility & Scalability:** The design must be simple enough to be recognizable at a glance and scalable to work on everything from a tiny favicon to a large billboard. It must be impactful in both full color and solid black and white. Think about negative space.
+3.  **Vector-Ready Prompt:** The prompt must guide an AI to create a clean, scalable vector-style graphic. Use keywords like 'minimalist vector logo', 'flat icon', 'golden ratio', 'geometric', 'branding masterpiece'.
+4.  **Reference Analysis:** If a reference image is given, extract its core shapes and style. Use this as inspiration for a completely new and distinct logo concept.`;
 
 const PRINT_DESIGN_MASTER_INSTRUCTION = `You are a master of print design and corporate identity. You are tasked with creating an elegant and professional business card. Generate a JSON object with 'name', 'jobTitle', 'phone', 'email', 'website', and a 'backgroundImagePrompt'. All text must be in Russian.
 
@@ -47,13 +46,19 @@ DESIGN DIRECTIVES:
 3.  **Visual Storytelling:** The 'backgroundImagePrompt' should describe a scene that tells a story and sparks curiosity. Use keywords: 'YouTube thumbnail', 'viral', 'cinematic lighting', 'dramatic', 'trending'.
 4.  **Reference Analysis:** Analyze the reference thumbnail's composition, color grading, and text placement. Emulate the *strategy* behind its success in your own original design.`;
 
-const MARKETING_GURU_INSTRUCTION = `You are a Marketing Communications Director creating a high-impact visual for a social media ad campaign. Your goal is to stop the scroll and drive conversions. Generate a JSON object with 'headline', 'callToAction', and a 'backgroundImagePrompt'. All text must be in Russian.
+const MARKETING_GURU_INSTRUCTION = `You are a Corporate Communications expert and marketing strategist. Your task is to design a single, powerful slide for a marketing kit or an ad creative, following the AIDA model. Generate the specified JSON object. All text must be in Russian.
+
+AIDA MODEL:
+- **Attention:** Grab the viewer's attention with a powerful visual and headline.
+- **Interest:** Pique their interest with compelling details or benefits.
+- **Desire:** Create an emotional connection and a desire for the product/service.
+- **Action:** Provide a clear and compelling call to action.
 
 DESIGN DIRECTIVES:
-1.  **Single Focal Point:** The ad must have one clear message and one clear visual focus.
-2.  **Compelling Copy:** The 'headline' should identify a pain point or a benefit. The 'callToAction' must be a clear, urgent command (e.g., 'Узнать больше', 'Скачать бесплатно').
-3.  **Psychology of Color:** The 'backgroundImagePrompt' should specify colors that evoke the desired emotion and action. Use keywords: 'social media ad', 'marketing creative', 'conversion-focused', 'professional product photography', 'vibrant'.
-4.  **Reference Analysis:** Analyze the reference ad's value proposition and visual hierarchy. Apply these persuasive techniques to your new ad creative.`;
+1.  **Clarity and Impact:** The asset must communicate its core message in under 5 seconds.
+2.  **Professionalism & Emotion:** The style should be clean and trustworthy, but also emotionally resonant.
+3.  **Content Hierarchy:** Ensure the generated text fields follow a logical flow from attention-grabbing to action-oriented.
+4.  **Reference Analysis:** Analyze the reference image's tone and style. Apply this aesthetic to the new design's background and overall feel.`;
 
 const PUBLISHING_ART_DIRECTOR_INSTRUCTION = `You are an Art Director for a major online publication like Medium or WIRED. You need to create a stunning cover image for a digital article. Generate a JSON object with 'title' and 'imagePrompt'. All text must be in Russian.
 
@@ -71,6 +76,15 @@ DESIGN DIRECTIVES:
 3.  **Atmosphere:** The design must convey the vibe of the event (e.g., energetic, exclusive, relaxed).
 4.  **Reference Analysis:** Study the reference poster's grid system, font pairing, and visual treatment. Use these design systems as a foundation for your new poster.`;
       
+const CONTENT_MARKETER_INSTRUCTION = `You are a Content Marketer and Graphic Designer. Your task is to create a visually appealing and useful checklist. Generate a JSON object with a 'title', an array of 'items' for the checklist, and a 'backgroundImagePrompt' for an attractive but non-distracting background. All text must be in Russian.
+
+DESIGN DIRECTIVES:
+1.  **Clarity and Utility:** The checklist must be easy to read and use. The 'items' should be concise and actionable.
+2.  **Aesthetic Appeal:** The design should be clean, organized, and branded. The background should be stylish but not interfere with readability.
+3.  **Structured Content:** The 'title' is the main topic. The 'items' should be an array of 5-7 short strings.
+4.  **Reference Analysis:** Analyze the reference image for its layout, color scheme, and typography. Apply these design principles to create a new, well-structured checklist.`;
+
+
 // =================================================================
 // --- 2. JSON SCHEMAS (THE "DATA STRUCTURES") ---
 // =================================================================
@@ -194,7 +208,7 @@ const WEBSITE_SCHEMA = {
           items: {
             type: Type.OBJECT,
             properties: {
-              platform: { type: Type.STRING, description: "Social media platform name: 'Twitter', 'LinkedIn', 'Instagram', or 'Facebook'." },
+              platform: { type: Type.STRING, description: "Social media platform name (e.g., 'Twitter', 'LinkedIn', 'X')." },
               href: { type: Type.STRING, description: "URL for the social media profile." },
             },
             required: ['platform', 'href']
@@ -216,6 +230,33 @@ const GENERIC_IMAGE_ASSET_SCHEMA = (designType: string) => ({
     },
     required: ['designType', 'title', 'imagePrompt']
 });
+
+const MARKETING_KIT_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        designType: { type: Type.STRING, description: "Must be 'marketing-kit'." },
+        slideTitle: { type: Type.STRING, description: "The main title of the presentation slide (Attention)." },
+        mainThesis: { type: Type.STRING, description: "A single, compelling sentence summarizing the core message (Interest)." },
+        keyPoints: { 
+            type: Type.ARRAY, 
+            items: { type: Type.STRING },
+            description: "An array of 3-5 short, powerful bullet points that build Desire."
+        },
+        backgroundImagePrompt: { type: Type.STRING, description: "A prompt for a professional, abstract background graphic. Avoid photos." }
+    },
+    required: ['designType', 'slideTitle', 'mainThesis', 'keyPoints', 'backgroundImagePrompt']
+};
+
+const LOGO_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        designType: { type: Type.STRING, description: "Must be 'logo'." },
+        brandName: { type: Type.STRING, description: "The name of the brand the logo is for." },
+        colorLogoPrompt: { type: Type.STRING, description: "A detailed prompt for the primary, full-color logo version." },
+        bwLogoPrompt: { type: Type.STRING, description: "A detailed prompt for a monochrome (black and white) version of the same logo." }
+    },
+    required: ['designType', 'brandName', 'colorLogoPrompt', 'bwLogoPrompt']
+};
 
 const BUSINESS_CARD_SCHEMA = {
     type: Type.OBJECT,
@@ -246,9 +287,9 @@ const AD_CREATIVE_SCHEMA = {
     type: Type.OBJECT,
     properties: {
         designType: { type: Type.STRING, description: "Must be 'ad-creative'." },
-        headline: { type: Type.STRING, description: "The main marketing message or headline of the ad." },
-        callToAction: { type: Type.STRING, description: "The call to action text (e.g., 'Shop Now', 'Learn More')." },
-        backgroundImagePrompt: { type: Type.STRING, description: "A prompt for an eye-catching image that clearly showcases the product or service." }
+        headline: { type: Type.STRING, description: "The main marketing message or headline of the ad (Attention)." },
+        callToAction: { type: Type.STRING, description: "The call to action text (e.g., 'Shop Now', 'Learn More') (Action)." },
+        backgroundImagePrompt: { type: Type.STRING, description: "A prompt for an eye-catching image that showcases the product/service and creates Desire." }
     },
     required: ['designType', 'headline', 'callToAction', 'backgroundImagePrompt']
 };
@@ -263,6 +304,21 @@ const POSTER_SCHEMA = {
         backgroundImagePrompt: { type: Type.STRING, description: "A prompt for the main visual of the poster, which should be artistic and thematic." }
     },
     required: ['designType', 'title', 'subtitle', 'eventInfo', 'backgroundImagePrompt']
+};
+
+const CHECKLIST_SCHEMA = {
+    type: Type.OBJECT,
+    properties: {
+        designType: { type: Type.STRING, description: "Must be 'checklist'." },
+        title: { type: Type.STRING, description: "The title of the checklist." },
+        items: { 
+            type: Type.ARRAY, 
+            items: { type: Type.STRING },
+            description: "An array of 5-7 checklist items."
+        },
+        backgroundImagePrompt: { type: Type.STRING, description: "A prompt for a clean, stylish background image." }
+    },
+    required: ['designType', 'title', 'items', 'backgroundImagePrompt']
 };
 
 const LEAD_MAGNET_SCHEMA = {
@@ -305,7 +361,7 @@ export const DESIGN_TYPES = [
         description: 'Сгенерируйте ключевой слайд презентации о вашей компании.',
         svgIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 10V3L4 14H11L11 21L20 10H13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
         placeholderPrompt: `например, "Слайд 'Наши Преимущества' для IT-компании. Инфографика, иконки, корпоративные цвета."`,
-        schema: GENERIC_IMAGE_ASSET_SCHEMA('marketing-kit'),
+        schema: MARKETING_KIT_SCHEMA,
         systemInstruction: MARKETING_GURU_INSTRUCTION,
     },
     {
@@ -314,7 +370,7 @@ export const DESIGN_TYPES = [
         description: 'Разработайте уникальный и запоминающийся логотип для вашего бренда.',
         svgIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
         placeholderPrompt: `например, "Логотип для кофейни 'Cosmic Brew'. Минимализм. Планета Сатурн вместо кофейной чашки."`,
-        schema: GENERIC_IMAGE_ASSET_SCHEMA('logo'),
+        schema: LOGO_SCHEMA,
         systemInstruction: BRAND_STRATEGIST_INSTRUCTION,
     },
     {
@@ -368,8 +424,8 @@ export const DESIGN_TYPES = [
         description: 'Стильно оформите полезный чек-лист для вашей аудитории.',
         svgIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.4999 7.33325L10.8333 12.9999L7.49992 9.66659" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 5H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 19H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
         placeholderPrompt: `например, "Дизайн чек-листа 'Утренние ритуалы'. Минимализм, иконки, пастельно-зеленый цвет."`,
-        schema: GENERIC_IMAGE_ASSET_SCHEMA('checklist'),
-        systemInstruction: PUBLISHING_ART_DIRECTOR_INSTRUCTION,
+        schema: CHECKLIST_SCHEMA,
+        systemInstruction: CONTENT_MARKETER_INSTRUCTION,
     },
     {
         id: 'lead-magnet',

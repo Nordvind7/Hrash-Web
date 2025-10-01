@@ -103,16 +103,20 @@ export interface AppDesignData {
 
 export interface MarketingKitData {
     designType: 'marketing-kit';
-    title: string;
-    imagePrompt: string;
-    imageUrl?: string;
+    slideTitle: string;
+    mainThesis: string;
+    keyPoints: string[];
+    backgroundImagePrompt: string;
+    backgroundImageUrl?: string;
 }
 
 export interface LogoData {
     designType: 'logo';
-    title: string;
-    imagePrompt: string;
-    imageUrl?: string;
+    brandName: string;
+    colorLogoPrompt: string;
+    colorLogoUrl?: string;
+    bwLogoPrompt: string;
+    bwLogoUrl?: string;
 }
 
 export interface BusinessCardData {
@@ -161,8 +165,9 @@ export interface PosterData {
 export interface ChecklistData {
     designType: 'checklist';
     title: string;
-    imagePrompt: string;
-    imageUrl?: string;
+    items: string[];
+    backgroundImagePrompt: string;
+    backgroundImageUrl?: string;
 }
 
 export interface LeadMagnetData {

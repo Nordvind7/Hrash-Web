@@ -252,7 +252,7 @@ const Designer: React.FC = () => {
         return (
             <div className="w-full flex flex-col items-center animate-fade-in text-center">
                 <div className="max-w-3xl mx-auto my-8">
-                    <h2 className="text-3xl sm:text-5xl font-bold text-white font-heading">Hrash Designer</h2>
+                    <h2 className="text-3xl sm:text-5xl font-bold text-white font-heading">AI Designer Hrash</h2>
                     <p className="text-lg text-slate-400 mt-2">
                         Ваш персональный ИИ - дизайнер
                     </p>

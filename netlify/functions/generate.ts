@@ -1,28 +1,60 @@
-import { GoogleGenAI } from "@google/genai";
+
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { DesignOutput, DesignTypeId } from '../../types';
 import { DESIGN_TYPES } from '../../constants/design-types';
 
-// This is a Netlify function, so we can use environment variables safely on the server.
 const apiKey = process.env.API_KEY;
 if (!apiKey) {
-    // This function will fail during build if the key is missing, which is intended.
     throw new Error("The API_KEY environment variable is not set in the Netlify deployment configuration.");
 }
 const ai = new GoogleGenAI({ apiKey });
 
+// Helper function for retrying API calls with exponential backoff
+const retryRequest = async <T>(requestFn: () => Promise<T>, maxRetries = 3, delay = 1000): Promise<T> => {
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            return await requestFn();
+        } catch (error) {
+            // FIX: Safely access properties on the unknown error object.
+            const err = error as any;
+            const isRetryable = err.status === 'UNAVAILABLE' || (err.message && err.message.includes('503'));
+            if (isRetryable) {
+                if (i === maxRetries - 1) {
+                    throw new Error("The model is overloaded. Please try again later.");
+                }
+                const backoffDelay = delay * Math.pow(2, i);
+                await new Promise(resolve => setTimeout(resolve, backoffDelay));
+            } else {
+                throw error;
+            }
+        }
+    }
+    throw new Error("Request failed after multiple retries.");
+};
 
-// --- All the helper functions from the old service ---
+// FIX: Define a type for the image generation response to fix type errors.
+interface GenerateImagesResponse {
+    generatedImages: {
+        image: {
+            imageBytes: string;
+        };
+    }[];
+}
+
 const getAspectRatioForAsset = (designTypeId: DesignTypeId, key: string): '16:9' | '1:1' | '9:16' => {
     if (key.toLowerCase().includes('avatar')) return '1:1';
     
     switch (designTypeId) {
         case 'youtube-cover':
         case 'marketing-kit':
-        case 'ad-creative':
             return '16:9';
+        case 'ad-creative':
+            return '1:1';
         case 'lead-magnet':
         case 'checklist':
         case 'app-design':
+        case 'business-card':
+        case 'poster':
             return '9:16';
         default:
             return '1:1';
@@ -31,7 +63,8 @@ const getAspectRatioForAsset = (designTypeId: DesignTypeId, key: string): '16:9'
 
 const generateImage = async (prompt: string, aspectRatio: '16:9' | '1:1' | '9:16'): Promise<string> => {
     try {
-        const response = await ai.models.generateImages({
+        // FIX: Explicitly type the response to avoid property access errors on 'unknown'.
+        const response = await retryRequest<GenerateImagesResponse>(() => ai.models.generateImages({
             model: 'imagen-4.0-generate-001',
             prompt: prompt,
             config: {
@@ -39,7 +72,7 @@ const generateImage = async (prompt: string, aspectRatio: '16:9' | '1:1' | '9:16
                 outputMimeType: 'image/png',
                 aspectRatio: aspectRatio,
             },
-        });
+        }));
         const base64ImageBytes = response.generatedImages[0].image.imageBytes;
         return `data:image/png;base64,${base64ImageBytes}`;
     } catch (error) {
@@ -82,7 +115,6 @@ async function processImagePrompts(data: any, designTypeId: DesignTypeId): Promi
     return data;
 }
 
-// --- The Netlify handler ---
 export const handler = async (event) => {
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -104,7 +136,8 @@ export const handler = async (event) => {
             contents = textPart.text;
         }
 
-        const response = await ai.models.generateContent({
+        // FIX: Explicitly type the response to avoid property access errors on 'unknown'.
+        const response = await retryRequest<GenerateContentResponse>(() => ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: contents,
             config: {
@@ -112,10 +145,21 @@ export const handler = async (event) => {
                 responseSchema: designType.schema,
                 systemInstruction: designType.systemInstruction,
             },
-        });
+        }));
         
-        const jsonText = response.text.trim();
-        const generatedData = JSON.parse(jsonText);
+        const jsonText = response.text?.trim();
+        if (!jsonText) {
+            throw new Error("Не удалось создать дизайн: ИИ вернул пустой ответ.");
+        }
+
+        let generatedData;
+        try {
+            generatedData = JSON.parse(jsonText);
+        } catch (e) {
+            console.error("JSON parsing error:", e);
+            console.error("Malformed AI response:", jsonText);
+            throw new Error("Не удалось создать дизайн: ИИ вернул некорректный ответ. Пожалуйста, попробуйте еще раз.");
+        }
         
         const finalData = await processImagePrompts(generatedData, designTypeId);
         
@@ -129,7 +173,7 @@ export const handler = async (event) => {
         console.error("Error in Netlify function:", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message || "An unknown server error occurred." }),
+            body: JSON.stringify({ error: (error as Error).message || "An unknown server error occurred." }),
         };
     }
 };
