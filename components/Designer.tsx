@@ -47,6 +47,9 @@ function getAssetTitle(output: DesignOutput): string {
     if ('title' in output && output.title) {
         return output.title;
     }
+     if ('slideTitle' in output && output.slideTitle) {
+        return output.slideTitle;
+    }
     if ('name' in output && output.name) {
         return `Визитка: ${output.name}`;
     }
@@ -114,9 +117,13 @@ const Designer: React.FC = () => {
 
   const handleDownload = async () => {
     if (!designOutput) return;
+    
+    const isPdfAsset = designOutput.designType === 'website' || designOutput.designType === 'marketing-kit';
 
-    if (isWebsiteData(designOutput)) {
-        await handleDownloadPdf();
+    if (isPdfAsset) {
+        const element = designOutput.designType === 'website' ? prototypeRef.current : graphicAssetViewerRef.current;
+        const filename = getAssetTitle(designOutput).replace(/\s/g, '_');
+        await handleDownloadPdf(element, filename);
     } else {
         await handleDownloadImage();
     }
@@ -150,20 +157,19 @@ const Designer: React.FC = () => {
     }
   };
 
-  const handleDownloadPdf = async () => {
-    if (!prototypeRef.current || !window.html2canvas || !window.jspdf) {
-        alert("Ошибка: Не удалось загрузить библиотеки для создания PDF.");
+  const handleDownloadPdf = async (element: HTMLDivElement | null, filename: string) => {
+    if (!element || !window.html2canvas || !window.jspdf) {
+        alert("Ошибка: Не удалось загрузить библиотеки или найти элемент для создания PDF.");
         return;
     };
 
     setIsDownloading(true);
     try {
         const { jsPDF } = window.jspdf;
-        const backgroundColor = isWebsiteData(designOutput!) ? designOutput.theme.backgroundColor : '#111827';
-        const canvas = await window.html2canvas(prototypeRef.current, {
+        const canvas = await window.html2canvas(element, {
             useCORS: true,
             scale: 2, 
-            backgroundColor: backgroundColor,
+            backgroundColor: null,
             allowTaint: true,
         });
 
@@ -175,7 +181,7 @@ const Designer: React.FC = () => {
         });
 
         pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-        pdf.save('hrash-designer-website.pdf');
+        pdf.save(`${filename}.pdf`);
     } catch (e) {
         console.error("Не удалось сгенерировать PDF:", e);
         setError("Произошла ошибка при создании PDF файла.");
@@ -206,6 +212,7 @@ const Designer: React.FC = () => {
     }
     if (designOutput) {
         const isWebsite = isWebsiteData(designOutput);
+        const isPdfDownload = isWebsite || designOutput.designType === 'marketing-kit';
         return (
              <div className="animate-fade-in w-full">
                 {/* Control Bar */}
@@ -233,7 +240,7 @@ const Designer: React.FC = () => {
                            ) : (
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                            )}
-                            <span className="hidden sm:inline">{isDownloading ? "..." : `Скачать ${isWebsite ? "PDF" : "PNG"}`}</span>
+                            <span className="hidden sm:inline">{isDownloading ? "..." : `Скачать ${isPdfDownload ? "PDF" : "PNG"}`}</span>
                         </button>
                     </div>
                 </div>

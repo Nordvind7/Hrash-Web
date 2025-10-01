@@ -99,6 +99,11 @@ async function processImagePrompts(data: any, designTypeId: DesignTypeId): Promi
         
         for (const key of keys) {
             if (key.toLowerCase().endsWith('prompt') && typeof newData[key] === 'string' && newData[key]) {
+                // Optimization: Skip generating avatar images for websites to prevent timeouts.
+                if (designTypeId === 'website' && key.toLowerCase() === 'avatarprompt') {
+                    continue; 
+                }
+                
                 const urlKey = key.replace(/prompt$/i, 'Url');
                 const aspectRatio = getAspectRatioForAsset(designTypeId, key);
                 promises.push(

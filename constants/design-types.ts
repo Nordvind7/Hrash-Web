@@ -84,6 +84,14 @@ DESIGN DIRECTIVES:
 3.  **Structured Content:** The 'title' is the main topic. The 'items' should be an array of 5-7 short strings.
 4.  **Reference Analysis:** Analyze the reference image for its layout, color scheme, and typography. Apply these design principles to create a new, well-structured checklist.`;
 
+const LEAD_MAGNET_DESIGNER_INSTRUCTION = `You are a specialist in creating high-converting lead magnets (e-books, guides). Your goal is to design a compelling cover. Generate a JSON object with 'title', 'author', and 'backgroundImagePrompt'. All text must be in Russian.
+
+DESIGN DIRECTIVES:
+1.  **Professional & Trustworthy:** The cover must look professional and authoritative, making the user want to download it.
+2.  **Clear Title:** The 'title' must be the most prominent element.
+3.  **Abstract Visuals:** The 'backgroundImagePrompt' should describe a clean, abstract, or stylized graphic that relates to the topic. Avoid stock photos of people. Think '3D abstract render', 'minimalist geometric pattern', 'professional book cover design'.
+4.  **Reference Analysis:** Analyze the reference image for its color palette and compositional balance. Apply this mood and structure to your original cover design.`;
+
 
 // =================================================================
 // --- 2. JSON SCHEMAS (THE "DATA STRUCTURES") ---
@@ -434,6 +442,6 @@ export const DESIGN_TYPES = [
         svgIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 13V19C13 20.1046 13.8954 21 15 21H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 5V13H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 5H20V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 7L21 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
         placeholderPrompt: `например, "Обложка для e-book 'Гид по продуктивности'. Чистый дизайн, яркий акцент, 3D иллюстрация."`,
         schema: LEAD_MAGNET_SCHEMA,
-        systemInstruction: PUBLISHING_ART_DIRECTOR_INSTRUCTION,
+        systemInstruction: LEAD_MAGNET_DESIGNER_INSTRUCTION,
     },
 ];
